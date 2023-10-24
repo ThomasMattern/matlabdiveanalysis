@@ -10,7 +10,7 @@ or as a separate GPS file if, for example, AxyDepth TDRs were used in conjunctio
 such as iGotU. Dive analysis can also be performed without any GPS data. However, this requires an empty, 
 dummy GPS file.
 
-1. Reduce accelerometer data
+## 1. Reduce accelerometer data
 
 After conversion of the raw logger data using the X Manager,  the raw accelerometer data needs to be 
 'reduced' to only data rows that contain actualy dive data. For example, in files that contain accelerometer 
