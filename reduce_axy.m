@@ -11,11 +11,11 @@ datetime.setDefaultFormats('default','dd/MM/yyyy');
 
 ds = tabularTextDatastore(rawdive,'TextscanFormats',{'%q',...
     '%{dd/MM/uuuu}D','%T','%f','%f','%f','%q','%f','%f','%f',...
-    '%f','%f','%f','%f','%f','%f'});
+    '%f','%f','%f','%f','%f','%f','%*[^\n]'});
 reset(ds)
 X = [];
 dlm = [];
- disp('Simmering data down. Please be patient.');
+disp('Simmering data down. Please be patient.');
 while hasdata(ds)
       T = read(ds);
       rows = find(~isnan(T.Depth));
@@ -26,8 +26,11 @@ if isempty(dlm)
     datetxt=char(X.Date(1));
     dlm=regexp(datetxt,'[^a-z0-9_]');
     dlm=datetxt(dlm(1));
-    
 end
+
+% Find and remove data from concatenated AxyRemote sessions without valid timestamp
+bogus = find(X.Date=="01/01/0001"); 
+X(bogus,:)=[];
 
 % Determine date arrangement
 datecompsA = split(char(X.Date(1)),dlm);
@@ -60,8 +63,16 @@ xaxis = datetime(dttm,'timezone','UTC');
 %xaxis.TimeZone="America/Santiago";
 xaxis.TimeZone="Pacific/Auckland";
 yaxis = -X.Depth;
+taxis =X.Temp___C_;
+
+%Plot Temperature and Dive data as visual reference
+ax1 = subplot('Position', [0.1, 0.75, 0.8, 0.18]); % [left, bottom, width, height]
+plot(xaxis,taxis)
+set(gca, 'XTickLabel', []);
+ax2 = subplot('Position', [0.1, 0.1, 0.8, 0.63]); % [left, bottom, width, height]
 plot(xaxis,yaxis)
 xtickformat('HH:mm');
+linkaxes([ax1, ax2], 'x'); % Link only the x-axis
 
 disp('Writing simmered down data to file. Please wait.');
 [fiddive,msg]=fopen([rawdive(1:length(rawdive)-4) '_reduced.txt'],'wt');
