@@ -16,6 +16,6 @@ After conversion of the raw logger data using the X Manager,  the raw accelerome
 'reduced' to only data rows that contain actualy dive data. For example, in files that contain accelerometer 
 data recorded at 25Hz, only every 25th row contains the required information for dive analyis.
 
-To run call the script 'reduce_axy' in Matlab and select the raw accelerometer file. After a few minutes
-thge reduced data file will be written into the folder containing the accelerometer file adding with the 
+To run, call the script 'reduce_axy' in Matlab and select the raw accelerometer file. After a few minutes
+the reduced data file will be written into the folder containing the accelerometer file adding with the 
 suffix '_reduced.txt' to the file name, e.g. '2_S1.csv' will be reduced to '2_S1_reduced.txt'.
