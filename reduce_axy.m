@@ -11,11 +11,11 @@ datetime.setDefaultFormats('default','dd/MM/yyyy');
 
 ds = tabularTextDatastore(rawdive,'TextscanFormats',{'%q',...
     '%{dd/MM/uuuu}D','%T','%f','%f','%f','%q','%f','%f','%f',...
-    '%f','%f','%f','%f','%f','%f','%*[^\n]'});
+    '%f','%f','%f','%f','%f','%f'});
 reset(ds)
 X = [];
 dlm = [];
-disp('Simmering data down. Please be patient.');
+ disp('Simmering data down. Please be patient.');
 while hasdata(ds)
       T = read(ds);
       rows = find(~isnan(T.Depth));
@@ -28,9 +28,8 @@ if isempty(dlm)
     dlm=datetxt(dlm(1));
 end
 
-% Find and remove data from concatenated AxyRemote sessions without valid timestamp
-bogus = find(X.Date=="01/01/0001"); 
-X(bogus,:)=[];
+bogus = find(X.Date=="01/01/0001");
+ X(bogus,:)=[];
 
 % Determine date arrangement
 datecompsA = split(char(X.Date(1)),dlm);
@@ -60,12 +59,13 @@ tm=datevec(X.Time,'HH:MM:ss');
 dttm = [dt(:,1:3) tm(:,4:6)];
 clear dt tm
 xaxis = datetime(dttm,'timezone','UTC');
-%xaxis.TimeZone="America/Santiago";
-xaxis.TimeZone="Pacific/Auckland";
+xaxis.TimeZone="America/Santiago";
+%xaxis.TimeZone="Pacific/Auckland";
 yaxis = -X.Depth;
 taxis =X.Temp___C_;
+%plot(xaxis,yaxis)
+%xtickformat('HH:mm');
 
-%Plot Temperature and Dive data as visual reference
 ax1 = subplot('Position', [0.1, 0.75, 0.8, 0.18]); % [left, bottom, width, height]
 plot(xaxis,taxis)
 set(gca, 'XTickLabel', []);
@@ -92,3 +92,4 @@ for r=1:size(X,1)
                       num2str(X.location_lon(r)), '\n']);
 end
 fclose all;
+clear all;
