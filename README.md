@@ -20,37 +20,34 @@ To run, call the script `reduce_axy.m` in Matlab and select the raw acceleromete
 the reduced data file will be written into the folder containing the accelerometer file adding with the 
 suffix '_reduced.txt' to the file name, e.g. '2_S1.csv' will be reduced to '2_S1_reduced.txt'.
 
+Note: The script assumes that data is exported in X Manager without any Metadata, pressure data coverted 
+to metres (rather than mbar), with date in the format dd/mm/yyy and 24 hour time.
+
 ## 2. Dive Analysis (read_data.m & dive_analysis.m)
 
 To perform a dive analysis of recorded GPS logger data, some data curation is necessary. Data from each 
 deployment must be stored in a folder named after the deployment site. Each site folder should contain 
 subfolders for individual deployments, named using a unique identifier (typically a bird ID).
 
-Within each bird ID subfolder, the script expects to find two files:
-
-1. The reduced dive data file produced with the reduce_axy script.
-2. The GPS data file as downloaded using TechnoSmart X Manager.
-
-The files must be named as follows:
-
-- dive.txt (dive data)
-- gps.txt (GPS data)
+Within each bird ID subfolder, the script expects to only find the reduced dive data file produced with
+the reduce_axy script. The file must be renamed to 'dive.txt'.
 
 For example, two deployments performed at Urenui Beach (New Zealand) would be stored as follows:
 
 - Urenui
   - female_40195_GPS05
     - dive.txt
-    - gps.txt
   - male_40549_GPS03
     - dive.txt
-    - gps.txt
   
 Run the `read_data.m` script and select the site folder (e.g., "Urenui" in the example above). The script will:
 
 1. Iterate through all subfolders.
 2. Perform a dive analysis on the contained data files.
 3. Prompt for a name and location to save the dive analysis data in CSV format.
+
+Note: this scripts requires helper scripts to work - baselinetracking.m, bottomtrap.m, and pos2dist.m. These 
+files should all be present in the toolbox folder.
 
 ## 3. Extract raw GPS Data based of Dive Analysis (trip_fixes.m)
 
@@ -68,3 +65,7 @@ Run `trip_fixes.m` and:
 2. Select the site folder containing the raw dive and GPS data.
 
 The script will output a new CSV file containing raw GPS fixes, named `{SITENAME}_gps.txt`
+
+## 4. Visualise dive data (visdiv.m)
+
+Another auxilary script that produces a graph that allows dive data to be explored visually.
