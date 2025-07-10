@@ -777,4 +777,3 @@ ddata.ExpolGap = expolFixes(:,4);
 fprintf(1,'...done!\n\n');
 
 fname=name;
-
