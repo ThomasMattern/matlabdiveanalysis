@@ -1,8 +1,3 @@
-% Script to prepare data recorded with AxyTrek GPS dive loggers for dive analyis.
-% The script reduces the dive/accelerometer data file so that only the rows with
-% dive data remain. 
-
-
 [filename, pathname] = uigetfile('.csv', 'Select raw AxyDepth dive file: ');
 rawdive = [pathname filename];
 clear pathname filename;
@@ -10,8 +5,8 @@ clear pathname filename;
 datetime.setDefaultFormats('default','dd/MM/yyyy');
 
 ds = tabularTextDatastore(rawdive,'TextscanFormats',{'%q',...
-    '%{dd/MM/uuuu}D','%T','%f','%f','%f','%q','%f','%f','%f',...
-    '%f','%f','%f','%f','%f','%f'});
+    '%{dd/MM/uuuu}D','%{hh:mm:ss.SSS}T','%f','%f','%f','%q','%f','%f','%f',...
+    '%f','%f','%f','%f','%f','%f','%f'});
 reset(ds)
 X = [];
 dlm = [];
