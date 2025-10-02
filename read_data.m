@@ -14,7 +14,7 @@ home = [];
     'Whenua Hou','Jackson Head','Charleston','Te Kahui','Choros A1',...
     'Choros A2','Choros A4','Choros A5','Choros A9','Choros W',...
     'Anchorage Bay East','South Bay West','Stack Bay','Te Kāhui',...
-    'El Pedral','Many Is #3','Petrel Is'},'ListSize',[150,120]);
+    'El Pedral','Many Is #3','Petrel Is','Isla Leones','Caleta Valdés'},'ListSize',[150,120]);
 switch indx
     case 1
         home=[-44.622771,167.912524]; %Harrison Cove
@@ -64,6 +64,10 @@ switch indx
         home=[-45.773936,166.512926]; %Many Is #3
     case 24
         home=[-45.741263,166.519396]; % Petrel Is
+    case 25
+        home=[-45.057717,-65.613425]; % Isla Leones
+    case 26
+        home=[-42.488029,-63.607332]; % Caleta Valdés
 end
 clear indx tf;
 
