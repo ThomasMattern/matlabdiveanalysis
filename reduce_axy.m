@@ -4,18 +4,10 @@ clear pathname filename;
 
 datetime.setDefaultFormats('default','dd/MM/yyyy');
 
-ds = tabularTextDatastore(rawdive,'TextscanFormats',{'%q',...
-    '%{dd/MM/uuuu}D','%{hh:mm:ss.SSS}T','%f','%f','%f','%q','%f','%f','%f',...
-    '%f','%f','%f','%f','%f','%f','%f'});
-reset(ds)
-X = [];
+disp('Simmering data down. Please be patient.');
+T = readtable(rawdive, 'VariableNamingRule', 'preserve');
+X = T(~isnan(T.Depth), :);
 dlm = [];
- disp('Simmering data down. Please be patient.');
-while hasdata(ds)
-      T = read(ds);
-      rows = find(~isnan(T.Depth));
-      X = [X; T(rows,:)];
-end
 
 if isempty(dlm)
     datetxt=char(X.Date(1));
@@ -54,10 +46,10 @@ tm=datevec(X.Time,'HH:MM:ss');
 dttm = [dt(:,1:3) tm(:,4:6)];
 clear dt tm
 xaxis = datetime(dttm,'timezone','UTC');
-xaxis.TimeZone="America/Santiago";
-%xaxis.TimeZone="Pacific/Auckland";
+%xaxis.TimeZone="America/Santiago";
+xaxis.TimeZone="Pacific/Auckland";
 yaxis = -X.Depth;
-taxis =X.Temp___C_;
+taxis =X.("Temp. (?C)");
 %plot(xaxis,yaxis)
 %xtickformat('HH:mm');
 
@@ -70,21 +62,19 @@ xtickformat('HH:mm');
 linkaxes([ax1, ax2], 'x'); % Link only the x-axis
 
 disp('Writing simmered down data to file. Please wait.');
-[fiddive,msg]=fopen([rawdive(1:length(rawdive)-4) '_reduced.txt'],'wt');
-fprintf(fiddive,[ 'Date', ',',...
-                  'Time',',',...
-                  'Temperature', ',',...
-                  'Depth', ',',...
-                  'lat', ',',...
-                  'lon','\n']);
-        
-              
-for r=1:size(X,1)
-    fprintf(fiddive,[ datestr(dttm(r,:),'dd-mm-yyyy,HH:MM:ss'), ',',...
-                      num2str(X.Temp___C_(r)), ',',...
-                      num2str(X.Depth(r)), ',',...
-                      num2str(X.location_lat(r)), ',',...
-                      num2str(X.location_lon(r)), '\n']);
-end
-fclose all;
+output_filename = [rawdive(1:length(rawdive)-4) '_reduced.txt'];
+
+% Create a table with the data to be written
+Date = cellstr(datestr(dttm, 'dd-mm-yyyy'));
+Time = cellstr(datestr(dttm, 'HH:MM:ss'));
+Temperature = X.("Temp. (?C)");
+Depth = X.Depth;
+lat = X.("location-lat");
+lon = X.("location-lon");
+
+output_table = table(Date, Time, Temperature, Depth, lat, lon);
+
+% Write the table to the output file
+writetable(output_table, output_filename);
+
 clear all;
