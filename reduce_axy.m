@@ -1,26 +1,13 @@
-% Script to prepare data recorded with AxyTrek GPS dive loggers for dive analyis.
-% The script reduces the dive/accelerometer data file so that only the rows with
-% dive data remain. 
-
-
 [filename, pathname] = uigetfile('.csv', 'Select raw AxyDepth dive file: ');
 rawdive = [pathname filename];
 clear pathname filename;
 
 datetime.setDefaultFormats('default','dd/MM/yyyy');
 
-ds = tabularTextDatastore(rawdive,'TextscanFormats',{'%q',...
-    '%{dd/MM/uuuu}D','%T','%f','%f','%f','%q','%f','%f','%f',...
-    '%f','%f','%f','%f','%f','%f','%*[^\n]'});
-reset(ds)
-X = [];
-dlm = [];
 disp('Simmering data down. Please be patient.');
-while hasdata(ds)
-      T = read(ds);
-      rows = find(~isnan(T.Depth));
-      X = [X; T(rows,:)];
-end
+T = readtable(rawdive, 'VariableNamingRule', 'preserve');
+X = T(~isnan(T.Depth), :);
+dlm = [];
 
 if isempty(dlm)
     datetxt=char(X.Date(1));
@@ -28,9 +15,8 @@ if isempty(dlm)
     dlm=datetxt(dlm(1));
 end
 
-% Find and remove data from concatenated AxyRemote sessions without valid timestamp
-bogus = find(X.Date=="01/01/0001"); 
-X(bogus,:)=[];
+bogus = find(X.Date=="01/01/0001");
+ X(bogus,:)=[];
 
 % Determine date arrangement
 datecompsA = split(char(X.Date(1)),dlm);
@@ -63,9 +49,10 @@ xaxis = datetime(dttm,'timezone','UTC');
 %xaxis.TimeZone="America/Santiago";
 xaxis.TimeZone="Pacific/Auckland";
 yaxis = -X.Depth;
-taxis =X.Temp___C_;
+taxis =X.("Temp. (?C)");
+%plot(xaxis,yaxis)
+%xtickformat('HH:mm');
 
-%Plot Temperature and Dive data as visual reference
 ax1 = subplot('Position', [0.1, 0.75, 0.8, 0.18]); % [left, bottom, width, height]
 plot(xaxis,taxis)
 set(gca, 'XTickLabel', []);
@@ -75,20 +62,19 @@ xtickformat('HH:mm');
 linkaxes([ax1, ax2], 'x'); % Link only the x-axis
 
 disp('Writing simmered down data to file. Please wait.');
-[fiddive,msg]=fopen([rawdive(1:length(rawdive)-4) '_reduced.txt'],'wt');
-fprintf(fiddive,[ 'Date', ',',...
-                  'Time',',',...
-                  'Temperature', ',',...
-                  'Depth', ',',...
-                  'lat', ',',...
-                  'lon','\n']);
-        
-              
-for r=1:size(X,1)
-    fprintf(fiddive,[ datestr(dttm(r,:),'dd-mm-yyyy,HH:MM:ss'), ',',...
-                      num2str(X.Temp___C_(r)), ',',...
-                      num2str(X.Depth(r)), ',',...
-                      num2str(X.location_lat(r)), ',',...
-                      num2str(X.location_lon(r)), '\n']);
-end
-fclose all;
+output_filename = [rawdive(1:length(rawdive)-4) '_reduced.txt'];
+
+% Create a table with the data to be written
+Date = cellstr(datestr(dttm, 'dd-mm-yyyy'));
+Time = cellstr(datestr(dttm, 'HH:MM:ss'));
+Temperature = X.("Temp. (?C)");
+Depth = X.Depth;
+lat = X.("location-lat");
+lon = X.("location-lon");
+
+output_table = table(Date, Time, Temperature, Depth, lat, lon);
+
+% Write the table to the output file
+writetable(output_table, output_filename);
+
+clear all;
