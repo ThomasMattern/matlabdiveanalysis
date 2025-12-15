@@ -13,7 +13,7 @@ home = [];
     'East Shelter Is','Seymour Is','Rolla Is','Pigeon House','Groper Is',...
     'Whenua Hou','Jackson Head','Charleston','Te Kahui','Choros A1',...
     'Choros A2','Choros A4','Choros A5','Choros A9','Choros W',...
-    'Anchorage Bay East','South Bay West','Stack Bay','Te Kāhui',...
+    'Anchorage Bay East','South Bay West','Stack Bay','Orde Lees','Te Kāhui',...
     'El Pedral','Many Is #3','Petrel Is','Isla Leones','Caleta Valdés'},'ListSize',[150,120]);
 switch indx
     case 1
@@ -57,17 +57,15 @@ switch indx
     case 20  
         home=[-49.694825, 178.740793]; %Stack Bay       
     case 21  
-        home=[-39.059280, 174.048080]; %Te Kahui   
+        home=[-49.672865, 178.760070]; %Orde Lees  		
     case 22  
+        home=[-39.059280, 174.048080]; %Te Kahui   
+    case 23  
         home=[-42.946349, -64.363470]; %El Pedral
-    case 23
-        home=[-45.773936,166.512926]; %Many Is #3
     case 24
-        home=[-45.741263,166.519396]; % Petrel Is
+        home=[-45.773936,166.512926];  %Many Is #3
     case 25
-        home=[-45.057717,-65.613425]; % Isla Leones
-    case 26
-        home=[-42.488029,-63.607332]; % Caleta Valdés
+        home=[-45.741263,166.519396]; % Petrel Is
 end
 clear indx tf;
 
